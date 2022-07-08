@@ -1,0 +1,145 @@
+sudo apt install python3-scapy
+
+
+
+>>> pkt = IP()
+>>> print(pkt)
+WARNING: Calling str(pkt) on Python 3 makes no sense!
+b'E\x00\x00\x14\x00\x01\x00\x00@\x00|\xe7\x7f\x00\x00\x01\x7f\x00\x00\x01'
+
+
+
+A Ip pkt to 192.168.1.101
+>>> ip = IP(dst="192.168.1.101")
+>>> print(ip)
+WARNING: Calling str(pkt) on Python 3 makes no sense!
+b'E\x00\x00\x14\x00\x01\x00\x00@\x00\xf7(\xc0\xa8\x01\x0b\xc0\xa8\x01e'
+
+
+
+ls
+>>> ls(IP())
+version    : BitField  (4 bits)                  = 4               (4)
+ihl        : BitField  (4 bits)                  = None            (None)
+tos        : XByteField                          = 0               (0)
+len        : ShortField                          = None            (None)
+id         : ShortField                          = 1               (1)
+flags      : FlagsField  (3 bits)                = <Flag 0 ()>     (<Flag 0 ()>)
+frag       : BitField  (13 bits)                 = 0               (0)
+ttl        : ByteField                           = 64              (64)
+proto      : ByteEnumField                       = 0               (0)
+chksum     : XShortField                         = None            (None)
+src        : SourceIPField                       = '127.0.0.1'     (None)
+dst        : DestIPField                         = '127.0.0.1'     (None)
+options    : PacketListField                     = []              ([])
+
+
+
+>>> Ether(dst="ff:ff:ff:ff:ff:ff")
+<Ether  dst=ff:ff:ff:ff:ff:ff |>
+>>> 
+
+
+
+Ether()/IP()/TCP()
+TCP()
+IP ()
+Ether()
+
+
+
+>>> pkt = Ether()/IP()/TCP()
+>>> ls(pkt)
+## Ether
+dst        : DestMACField                        = 'ff:ff:ff:ff:ff:ff' (None)
+src        : SourceMACField                      = '00:00:00:00:00:00' (None)
+type       : XShortEnumField                     = 2048            (36864)
+--
+
+## IP
+version    : BitField  (4 bits)                  = 4               (4)
+ihl        : BitField  (4 bits)                  = None            (None)
+tos        : XByteField                          = 0               (0)
+len        : ShortField                          = None            (None)
+id         : ShortField                          = 1               (1)
+flags      : FlagsField  (3 bits)                = <Flag 0 ()>     (<Flag 0 ()>)
+frag       : BitField  (13 bits)                 = 0               (0)
+ttl        : ByteField                           = 64              (64)
+proto      : ByteEnumField                       = 6               (0)
+chksum     : XShortField                         = None            (None)
+src        : SourceIPField                       = '127.0.0.1'     (None)
+dst        : DestIPField                         = '127.0.0.1'     (None)
+options    : PacketListField                     = []              ([])
+--
+
+## TCP
+sport      : ShortEnumField                      = 20              (20)
+dport      : ShortEnumField                      = 80              (80)
+seq        : IntField                            = 0               (0)
+ack        : IntField                            = 0               (0)
+dataofs    : BitField  (4 bits)                  = None            (None)
+reserved   : BitField  (3 bits)                  = 0               (0)
+flags      : FlagsField  (9 bits)                = <Flag 2 (S)>    (<Flag 2 (S)>)
+window     : ShortField                          = 8192            (8192)
+chksum     : XShortField                         = None            (None)
+urgptr     : ShortField                          = 0               (0)
+options    : TCPOptionsField                     = []              (b'')
+
+
+
+look pkt
+- bit format
+raw(pkt)
+- hex format
+hexdump(pkt)
+- simple look
+pkt.summary()
+- open show
+pkt.show()
+- open show,similar to show
+pkt.show2()
+- show command that make the pkt
+pkt.command()
+
+-write to files
+wrpcap("demo.cap",pkts)
+-read files
+pkts = rdpcap("demo.cap")
+
+
+
+SEND AND RECEIVE DATA
+
+When target address is IP
+use send()
+When target address is MAC
+use sendp()
+# they send pkts without receiving
+
+
+sr() sr1() when target address is IP
+srp() when target address is MAC
+
+>>> pkt = IP(dst="192.168.1.1")/ICMP()
+>>> ans,uans = sr(pkt)
+Begin emission:
+Finished sending 1 packets.
+*
+Received 1 packets, got 1 answers, remaining 0 packets
+>>> ans
+<Results: TCP:0 UDP:0 ICMP:1 Other:0>
+>>> uans
+<Unanswered: TCP:0 UDP:0 ICMP:0 Other:0>
+>>> ans = sr1(pkt)
+Begin emission:
+Finished sending 1 packets.
+*
+Received 1 packets, got 1 answers, remaining 0 packets
+>>> ans
+<IP  version=4 ihl=5 tos=0x0 len=28 id=4972 flags= frag=0 ttl=64 proto=icmp chksum=0xe418 src=192.168.1.1 dst=192.168.1.11 |<ICMP  type=echo-reply code=0 chksum=0xffff id=0x0 seq=0x0 |<Padding  load='\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' |>>>
+>>> 
+
+
+
+sniff()
+>>> sniff(filter="",prn=lambda x:x.summary())
