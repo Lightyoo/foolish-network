@@ -1,0 +1,19 @@
+Dynamic Host Configuration Protocol
+
+Apply floor
+
+
+
+1 )
+send DHCP discover to find DHCP servers
+
+2 ) 
+DHCP Server receives DHCP and Send a DHCP Offer
+
+3 )
+If DHCP Client get a few DHCP Offer pkts , and It will only handle the first DHCP Offer
+And broad DHCP Request,including DHCP server and IP it uses
+
+4 )
+every DHCP will receive DHCP Request.If the DHCP server is itself
+Send A DHCP ACK
