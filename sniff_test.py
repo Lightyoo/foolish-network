@@ -4,8 +4,9 @@ filter_info = str(input("# filter:"))
 count = int(input("# count:"))
 
 def packet_callback(pkt):
-	print(pkt.show())	
-	print(pkt.summary())
+	# print(pkt.summary())
+	print(pkt.display())
+
 if count != 0:
 	sniff(filter=filter_info,count=count,prn=packet_callback)
 else:
